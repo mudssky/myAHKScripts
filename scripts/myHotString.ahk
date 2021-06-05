@@ -1,6 +1,6 @@
 
-; 设置终止符
-Hotstring("EndChars", "`n `t{^Pause}")
+; 设置终止符 空格,回车和tab
+Hotstring("EndChars", "`n `t")
 ; 替换日期和时间
 ::rq:: {
     send FormatTime("R")

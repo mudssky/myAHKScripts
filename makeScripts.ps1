@@ -1,21 +1,30 @@
 param(
     [string]$scriptName = 'myAllScripts.ahk',
     # 当前用户快速启动文件夹的位置
-    [string]$startUpFolder = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
+    [string]$startUpFolder = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup",
+    [switch]$concatNotInclude
 )
 
 $includString = ''
 # 递归查找scrpts目录下的所有ahk脚本，合成为一个脚本
 Get-ChildItem -Recurse -Path   ./Scripts *.ahk | ForEach-Object {
-    # powershell里面要把换行符解释成换行符有两种方法
-    $includString += "#include  {0} `n" -f $_.FullName
+    if ($concatNotInclude) {
+        # -raw获取原始字符串，这样就不会破坏换行符了。
+        $ahkStr = Get-Content -Path $_.FullName -Raw
+        $includString += $ahkStr + "`n"
+    }
+    else {
+        
+        # powershell里面要把换行符解释成换行符
+        $includString += "#include  {0} `n" -f $_.FullName
+    }
 }
 
 $baseStr = Get-Content .\base.ahk
 
 $finalAHK = $baseStr + $includString
 
-Out-File -InputObject $finalAHK -Encoding utf8 -FilePath $scriptName
+Out-File -InputObject $finalAHK -Encoding utf8 -FilePath $scriptName 
 
 
 $linkPath = Join-Path -Path $startUpFolder -ChildPath $scriptName
@@ -26,4 +35,4 @@ if (-not (Test-Path -Path $linkPath)) {
 }
 
 # 执行一次脚本
-Start-Process -FilePath $scriptName
+# Start-Process -FilePath $scriptName
