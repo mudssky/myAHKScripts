@@ -1,4 +1,4 @@
-; 定制大写Esc
+; 定制CapsLock
 ; 设置大写锁定正常为一直关闭状态
 SetCapsLockState "AlwaysOff"
 ; 使用capslock+esc切换大写锁定
@@ -9,7 +9,7 @@ Capslock & Esc::{
     Else 
         SetCapsLockState "AlwaysOn"
 }
-; toggle winAlwaysOnTop 实现窗口置顶
+; toggle winAlwaysOnTop 实现窗口置顶 CapsLock+t
 CapsLock & t::{
     WinSetAlwaysOnTop -1, "A"
 }
