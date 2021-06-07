@@ -31,8 +31,8 @@ $linkPath = Join-Path -Path $startUpFolder -ChildPath $scriptName
 # 如果还没有加入快捷方式到快速启动，就创建一次快捷方式，实现快速启动
 if (-not (Test-Path -Path $linkPath)) {
     New-Item -ItemType SymbolicLink -Path $startUpFolder -Name $scriptName  -Value $scriptName
-    Write-Host -ForegroundColor Green ('write  item: {0} to folder {1},link name:{2}' -f $path, $startUpFolder, $name)
+    Write-Host -ForegroundColor Green ('write  item: {0} to folder {1},link name:{2}' -f $path, $startUpFolder, $scriptName)
 }
 
 # 执行一次脚本
-# Start-Process -FilePath $scriptName
+Start-Process -FilePath $scriptName
