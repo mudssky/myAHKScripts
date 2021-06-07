@@ -27,7 +27,7 @@ makeScripts是powershell脚本，用于把scripts目录里面的所有脚本和b
 
 ## 02.switchIME.ahk
 提供自动切换输入法的功能。
-在你使用vscode或者windows terminal之类的应用会把你的输入法切换成英文输入法
+在你使用vscode或者windows terminal之类的应用时会把你的输入法切换成英文输入法
 
 |快捷键|功能|
 |---|---|
