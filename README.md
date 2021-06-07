@@ -9,7 +9,7 @@
 脚本统一存放在scripts目录
 
 ## 安装
-makeScripts是powershell脚本，用于把scripts目录里面的所有脚本和base.ahk拼接成一个并且在startup目录创建快捷方式，然后再执行一遍脚本。
+makeScripts是powershell脚本，用于把scripts目录里面的所有脚本和base.ahk拼接成一个并且在startup目录创建快捷方式，然后再执行一遍最终生成的ahk脚本。
 
 注意先确认powershell的执行权限，还有autohotkey v2是否正确安装再执行。
 **可能会需要管理员权限才能执行**。
