@@ -1,5 +1,6 @@
 # 忽略包含个人信息的secrets.ahk文件
 # 忽略最终生成的总脚本文件
+ignore/
 secrets.ahk
 myAllScripts.ahk
 # Logs
