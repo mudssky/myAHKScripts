@@ -1,7 +1,12 @@
+#requires -version 5.0
+#requires –runasadministrator
+# 顶部设置需求管理员权限
 param(
     [string]$scriptName = 'myAllScripts.ahk',
     # 当前用户快速启动文件夹的位置
-    [string]$startUpFolder = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup",
+    # [string]$startUpFolder = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup",
+    # 所有用户通用的快速启动目录
+    [string]$startUpFolder = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp",
     [switch]$concatNotInclude
 )
 
