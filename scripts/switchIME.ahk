@@ -52,8 +52,12 @@ GroupAdd "enAppGroup", "ahk_exe WindowsTerminal.exe" ;添加windows terminal
 Loop{
     WinWaitActive "ahk_group enAppGroup"
     currentWinID:= WinGetID("A")
+    currentWinTitle:=WinGetTitle(currentWinID)
     ; TrayTip Format("当前是{1}，切换为en输入法", WinGetTitle("A"))
-    switchIMEbyID(IMEmap["en"])
+    ; 排除用vscode等软件编辑markdown的情况
+    if (!RegExMatch(currentWinTitle,"\.md")){
+        switchIMEbyID(IMEmap["en"])
+    }
     ; 从当且窗口切出，进行下一轮监视
     WinWaitNotActive(currentWinID)
 }
