@@ -50,20 +50,31 @@ GroupAdd "enAppGroup", "ahk_exe Code.exe" ;添加 vscode
 GroupAdd "enAppGroup", "ahk_exe WindowsTerminal.exe" ;添加windows terminal
 ; 循环等待知道窗口组的窗口激活，切换当前输入法为en,之后再等待当切换出当前窗口继续监视
 Loop{
-    WinWaitActive "ahk_group enAppGroup"
-    currentWinID:= WinGetID("A")
-    currentWinTitle:=WinGetTitle(currentWinID)
-    ; TrayTip Format("当前是{1}，切换为en输入法", WinGetTitle("A"))
-    ; 排除用vscode等软件编辑markdown的情况
-    if (!RegExMatch(currentWinTitle,"\.md")){
-        switchIMEbyID(IMEmap["en"])
-    }
-    ; 从当且窗口切出，进行下一轮监视
-    ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
     try{
-        WinWaitNotActive(currentWinID)
+        WWAhwnd := WinWaitActive("ahk_group enAppGroup")
+    }catch as e{
+
+        TrayTip "switchIME winwaitactive error:" e.Message
+        Sleep(1000)
+        continue
     }
-    catch as e{
-        TrayTip "switchIME waitnoactive error:" e.Message
+    if(WWAhwnd ==0 ){
+        continue
+    }else{
+        currentWinTitle:=WinGetTitle(WWAhwnd)
+        ; TrayTip Format("当前是{1}，切换为en输入法", WinGetTitle("A"))
+        ; 排除用vscode等软件编辑markdown的情况
+        if (!RegExMatch(currentWinTitle,"\.md")){
+            switchIMEbyID(IMEmap["en"])
+        }
+        ; 从当且窗口切出，进行下一轮监视
+        ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
+        try{
+            WinWaitNotActive(WWAhwnd)
+        }
+        catch as e{
+            TrayTip "switchIME waitnoactive error:" e.Message
+        }
     }
+
 }
