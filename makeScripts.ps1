@@ -41,7 +41,7 @@ $linkPath = Join-Path -Path $startUpFolder -ChildPath $scriptName.Replace('.ahk'
 # 如果还没有加入快捷方式到快速启动，就创建一次快捷方式，实现快速启动
 if (-not (Test-Path -Path $linkPath)) {
     # New-Item -ItemType SymbolicLink -Path $startUpFolder -Name $scriptName  -Value $scriptName
-    new-lnk -targetPath $linkPath -sourcePath $scriptName
+    new-lnk -targetPath $linkPath -sourcePath (Join-Path -Path (Get-Location) -ChildPath $scriptName)
     Write-Host -ForegroundColor Green ('write  item: {0} to folder {1},link name:{2}' -f $path, $startUpFolder, $scriptName)
 }
 
