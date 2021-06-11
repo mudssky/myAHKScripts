@@ -1,10 +1,20 @@
+#requires -version 5.0
+#requires –runasadministrator
+# 顶部设置需求管理员权限
 param(
     [string]$scriptName = 'myAllScripts.ahk',
     # 当前用户快速启动文件夹的位置
-    [string]$startUpFolder = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup",
+    # [string]$startUpFolder = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup",
+    # 所有用户通用的快速启动目录
+    [string]$startUpFolder = "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp",
     [switch]$concatNotInclude
 )
-
+function new-lnk($targetPath, $sourcePath) {
+    $shell = New-Object -ComObject WScript.Shell
+    $shortcut = $shell.CreateShortcut($targetPath)
+    $shortcut.TargetPath = $sourcePath
+    $shortcut.Save()
+}
 $includString = ''
 # 递归查找scrpts目录下的所有ahk脚本，合成为一个脚本
 Get-ChildItem -Recurse -Path   ./Scripts *.ahk | ForEach-Object {
@@ -26,11 +36,12 @@ $finalAHK = $baseStr + $includString
 
 Out-File -InputObject $finalAHK -Encoding utf8 -FilePath $scriptName 
 
+$linkPath = Join-Path -Path $startUpFolder -ChildPath $scriptName.Replace('.ahk', '.lnk')
 
-$linkPath = Join-Path -Path $startUpFolder -ChildPath $scriptName
 # 如果还没有加入快捷方式到快速启动，就创建一次快捷方式，实现快速启动
 if (-not (Test-Path -Path $linkPath)) {
-    New-Item -ItemType SymbolicLink -Path $startUpFolder -Name $scriptName  -Value $scriptName
+    # New-Item -ItemType SymbolicLink -Path $startUpFolder -Name $scriptName  -Value $scriptName
+    new-lnk -targetPath $linkPath -sourcePath $scriptName
     Write-Host -ForegroundColor Green ('write  item: {0} to folder {1},link name:{2}' -f $path, $startUpFolder, $scriptName)
 }
 
