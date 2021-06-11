@@ -59,5 +59,11 @@ Loop{
         switchIMEbyID(IMEmap["en"])
     }
     ; 从当且窗口切出，进行下一轮监视
-    WinWaitNotActive(currentWinID)
+    ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
+    try{
+        WinWaitNotActive(currentWinID)
+    }
+    catch as e{
+        TrayTip "switchIME waitnoactive error:" e.Message
+    }
 }
