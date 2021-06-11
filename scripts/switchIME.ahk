@@ -64,6 +64,6 @@ Loop{
         WinWaitNotActive(currentWinID)
     }
     catch as e{
-        TrayTip "switchIME waitnoactive error:".e.Message
+        TrayTip "switchIME waitnoactive error:" e.Message
     }
 }
