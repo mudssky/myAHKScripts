@@ -3,7 +3,8 @@
 Hotstring("EndChars", "`n `t")
 ; 替换日期和时间
 ::rq:: {
-    send FormatTime("R")
+    ; send FormatTime("R")
+    send FormatTime(,"yyyy年M月d日 dddd HH:mm:ss")
 }
 
 ; 热字符串由终止符触发，包含下面几个
