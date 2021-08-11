@@ -61,7 +61,14 @@ Loop{
     if(WWAhwnd ==0 ){
         continue
     }else{
-        currentWinTitle:=WinGetTitle(WWAhwnd)
+        try{
+            currentWinTitle:=WinGetTitle(WWAhwnd)
+        }catch as e{
+
+            TrayTip "get window error:" e.Message
+            Sleep(1000)
+            continue
+        }
         ; TrayTip Format("当前是{1}，切换为en输入法", WinGetTitle("A"))
         ; 排除用vscode等软件编辑markdown的情况
         if (!RegExMatch(currentWinTitle,"\.md")){
