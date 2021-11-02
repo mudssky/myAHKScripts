@@ -4,6 +4,10 @@ windows自带输入法的id,可以通过调用windows api GetKeyboardLayout来�
 微软日文输入法 68224017
 微软英文输入法 67699721 
 */
+
+; 设置脚本是否可以 "看见" 隐藏的窗口
+DetectHiddenWindows True
+
 IMEmap:=Map(
     "zh",134481924,
     "jp",68224017,
@@ -24,6 +28,24 @@ switchIMEbyID(IMEID){
     winTitle:=WinGetTitle("A")
     PostMessage(0x50, 0, IMEID,, WinTitle )
 }
+
+; 可以用于判断微软拼音是否是英文模式
+isEnglishMode(){
+    hWnd := winGetID("A")
+    result := SendMessage(
+        0x283, ; Message : WM_IME_CONTROL
+        0x001, ; wParam : IMC_GETCONVERSIONMODE
+        0, ; lParam ： (NoArgs)
+        , ; Control ： (Window)
+        ; 获取当前输入法的模式
+        ; Retrieves the default window handle to the IME class.
+        "ahk_id " DllCall("imm32\ImmGetDefaultIMEWnd", "Uint", hWnd, "Uint")
+    )
+    ; DetectHiddenWindows Fasle
+    ; 返回值是0表示是英文模式，其他值表明是中文模式
+    return result == 0
+}
+
 ; 切换微软拼音输入法
 CapsLock & 1::{
     switchIMEbyID(IMEmap["zh"])
@@ -49,6 +71,42 @@ GroupAdd "enAppGroup", "ahk_exe pwsh.exe" ;添加powershell
 GroupAdd "enAppGroup", "ahk_exe Code.exe" ;添加 vscode
 GroupAdd "enAppGroup", "ahk_exe WindowsTerminal.exe" ;添加windows terminal
 ; 循环等待知道窗口组的窗口激活，切换当前输入法为en,之后再等待当切换出当前窗口继续监视
+; Loop{
+;     try{
+;         WWAhwnd := WinWaitActive("ahk_group enAppGroup")
+;     }catch as e{
+
+;         TrayTip "switchIME winwaitactive error:" e.Message
+;         Sleep(1000)
+;         continue
+;     }
+;     if(WWAhwnd ==0 ){
+;         continue
+;     }else{
+;         try{
+;             currentWinTitle:=WinGetTitle(WWAhwnd)
+;         }catch as e{
+
+;             TrayTip "get window error:" e.Message
+;             Sleep(1000)
+;             continue
+;         }
+;         ; TrayTip Format("当前是{1}，切换为en输入法", WinGetTitle("A"))
+;         ; 排除用vscode等软件编辑markdown的情况
+;         if (!RegExMatch(currentWinTitle,"\.md")){
+;             switchIMEbyID(IMEmap["en"])
+;         }
+;         ; 从当且窗口切出，进行下一轮监视
+;         ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
+;         try{
+;             WinWaitNotActive(WWAhwnd)
+;         }
+;         catch as e{
+;             TrayTip "switchIME waitnoactive error:" e.Message
+;         }
+;     }
+; }
+; 新版，用shift切换中英文模式，不需要安装另外的输入法
 Loop{
     try{
         WWAhwnd := WinWaitActive("ahk_group enAppGroup")
@@ -69,19 +127,25 @@ Loop{
             Sleep(1000)
             continue
         }
-        ; TrayTip Format("当前是{1}，切换为en输入法", WinGetTitle("A"))
-        ; 排除用vscode等软件编辑markdown的情况
+
+        ; 排除用vscode等软件编辑markdown的情况,编辑markdown的时候大部分地方使用中文
         if (!RegExMatch(currentWinTitle,"\.md")){
-            switchIMEbyID(IMEmap["en"])
+            ; 在en组app里，如果是中文模式切换成英文
+            if (!isEnglishMode()){
+                send "{Shift}"
+            }
         }
         ; 从当且窗口切出，进行下一轮监视
         ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
         try{
             WinWaitNotActive(WWAhwnd)
+            ; 切出en组app需要切回中文。
+            if(isEnglishMode()){
+                send "{Shift}"
+            }
         }
         catch as e{
             TrayTip "switchIME waitnoactive error:" e.Message
         }
     }
-
 }
