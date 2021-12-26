@@ -1,4 +1,9 @@
+
+# 忽略azurlane文件夹
+azurlane/
+
 # 忽略包含个人信息的secrets.ahk文件
+
 # 忽略最终生成的总脚本文件
 ignore/
 secrets.ahk

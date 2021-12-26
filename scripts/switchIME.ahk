@@ -112,8 +112,8 @@ Loop{
         WWAhwnd := WinWaitActive("ahk_group enAppGroup")
     }catch as e{
 
-        TrayTip "switchIME winwaitactive error:" e.Message
-        Sleep(1000)
+        ; TrayTip "switchIME winwaitactive error:" e.Message
+        ; Sleep(1000)
         continue
     }
     if(WWAhwnd ==0 ){
@@ -145,7 +145,8 @@ Loop{
             }
         }
         catch as e{
-            TrayTip "switchIME waitnoactive error:" e.Message
+            ; TrayTip "switchIME waitnoactive error:" e.Message
+            continue
         }
     }
 }
