@@ -123,7 +123,7 @@ Loop{
             currentWinTitle:=WinGetTitle(WWAhwnd)
         }catch as e{
 
-            TrayTip "get window error:" e.Message
+            ; TrayTip "get window error:" e.Message
             Sleep(1000)
             continue
         }
@@ -145,7 +145,6 @@ Loop{
             }
         }
         catch as e{
-            ; TrayTip "switchIME waitnoactive error:" e.Message
             continue
         }
     }
