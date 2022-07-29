@@ -123,8 +123,8 @@ Loop{
             currentWinTitle:=WinGetTitle(WWAhwnd)
         }catch as e{
 
-            TrayTip "get window error:" e.Message
-            Sleep(1000)
+            ; TrayTip "get window error:" e.Message
+            ; Sleep(1000)
             continue
         }
 
