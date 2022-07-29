@@ -113,7 +113,7 @@ Loop{
     }catch as e{
 
         ; TrayTip "switchIME winwaitactive error:" e.Message
-        ; Sleep(1000)
+        Sleep(1000)
         continue
     }
     if(WWAhwnd ==0 ){
@@ -134,10 +134,9 @@ Loop{
             if (!isEnglishMode()){
                 send "{Shift}"
             }
-        }
-        ; 从当且窗口切出，进行下一轮监视
-        ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
-        try{
+            ; 从当且窗口切出，进行下一轮监视
+            ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
+
             WinWaitNotActive(WWAhwnd)
             ; 切出en组app需要切回中文。
             if(isEnglishMode()){
@@ -145,7 +144,7 @@ Loop{
             }
         }
         catch as e{
-            ; TrayTip "switchIME waitnoactive error:" e.Message
+            Sleep(1000)
             continue
         }
     }
