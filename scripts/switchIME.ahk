@@ -121,18 +121,12 @@ Loop{
     }else{
         try{
             currentWinTitle:=WinGetTitle(WWAhwnd)
-        }catch as e{
-
-            ; TrayTip "get window error:" e.Message
-            ; Sleep(1000)
-            continue
-        }
-
-        ; 排除用vscode等软件编辑markdown的情况,编辑markdown的时候大部分地方使用中文
-        if (!RegExMatch(currentWinTitle,"\.md")){
-            ; 在en组app里，如果是中文模式切换成英文
-            if (!isEnglishMode()){
-                send "{Shift}"
+            ; 排除用vscode等软件编辑markdown的情况,编辑markdown的时候大部分地方使用中文
+            if (!RegExMatch(currentWinTitle,"\.md")){
+                ; 在en组app里，如果是中文模式切换成英文
+                if (!isEnglishMode()){
+                    send "{Shift}"
+                }
             }
             ; 从当且窗口切出，进行下一轮监视
             ; try catch 避免因为突然关闭程序造成winwaitnotactive失效
