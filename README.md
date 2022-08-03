@@ -3,6 +3,7 @@
   - [安装](#安装)
   - [01. capslock.ahk](#01-capslockahk)
   - [02.switchIME.ahk](#02switchimeahk)
+  - [03.win.ahk](#03winahk)
 
 # myAHKScripts
 存放自己编写的autohotkey脚本，全部基于v2版本的语法。
@@ -36,3 +37,10 @@ makeScripts是powershell脚本，用于把scripts目录里面的所有脚本和b
 |Capslock+2|切换为微软英文键盘|
 |Capslock+3|切换为微软日文输入法|
 
+## 03.win.ahk
+win相关的快捷键
+定义`win+l`热键用于下班时，一键关闭一些应用程序
+在数组中放入进程名即可
+```ahk
+offDuttiesCloseProcessArr:= ["foobar2000.exe","QQMusic.exe"]
+```
