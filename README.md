@@ -4,6 +4,7 @@
   - [01. capslock.ahk](#01-capslockahk)
   - [02.switchIME.ahk](#02switchimeahk)
   - [03.win.ahk](#03winahk)
+  - [04.鼠标连点器](#04鼠标连点器)
 
 # myAHKScripts
 存放自己编写的autohotkey脚本，全部基于v2版本的语法。
@@ -17,6 +18,7 @@ makeScripts是powershell脚本，用于把scripts目录里面的所有脚本和b
 
 默认会采用include的方式进行拼接，有一个 `-concatNotInclude`参数，如果传递给脚本
 最后生成的ahk文件就是完整拼接的了。
+
 ## 01. capslock.ahk
 定制capslock键作为修饰键
 使用了官方提供的代码，完全禁用capslock键并且排除IME带来的干扰，使用capslock+esc代替capslock原来的功能。
@@ -44,3 +46,14 @@ win相关的快捷键
 ```ahk
 offDuttiesCloseProcessArr:= ["foobar2000.exe","QQMusic.exe"]
 ```
+
+## 04.鼠标连点器
+
+| 快捷键     | 功能                                       |
+| ---------- | ------------------------------------------ |
+| Capslock+c | 连续点击，超过10分钟或者鼠标位移大于50停止 |
+| Capslock+r | 停止点击，重置计数器                       |
+| CapsLock+m | 输入点击的时间间隔                         |
+
+
+
