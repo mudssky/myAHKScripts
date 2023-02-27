@@ -87,11 +87,14 @@ CapsLock & m::{
     resetMouseClick()
     global clickInterval
     wnhn := "W200 H100"
-    time := InputBox("鼠标点击的时间间隔(ms)", "默认为50ms" ,wnhn).value
-    if (time <10){
+    timeInput := InputBox("鼠标点击的时间间隔(ms)", "默认为50ms" ,wnhn)
+
+    if (timeInput.Result='Cancel'){
+        return
+    }else if (timeInput.Value <10){
         MsgBox('不能输入小于10的数')
         return
     }
-    clickInterval:=time
+    clickInterval:=timeInput.Value
 
 }
