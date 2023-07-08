@@ -77,6 +77,11 @@ resetMouseClick(){
     global isMouseClickOn,mouseClickCount
     isMouseClickOn:=false
     mouseClickCount:=0
+    resetMousePosition()
+}
+; 重置鼠标位置到屏幕中心，用于多屏幕时寻找鼠标位置
+resetMousePosition(){
+    MouseMove(A_ScreenWidth/2, A_ScreenHeight/2)
 }
 ; 重置鼠标连点
 CapsLock & r::{
@@ -98,3 +103,12 @@ CapsLock & m::{
     clickInterval:=timeInput.Value
 
 }
+
+; 设置指针大小
+SPI_SETCURSORSIZE := 0x0071
+
+; 指定所需的指针大小（例如，20）
+desiredSize := 50
+
+; 调用 SystemParametersInfo 函数
+DllCall("SystemParametersInfo", "UInt", SPI_SETCURSORSIZE, "UInt", desiredSize, "Ptr", 0, "UInt", 0)
