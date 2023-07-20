@@ -1,0 +1,38 @@
+{
+  "default": true,
+  //   MD004 统一无序列表的格式，最内层使用- ，顺序依次为- + *
+  "ul-style": true,
+  //   MD009 尾部空格只能是0或2个，两个表示换行
+  "no-trailing-spaces": true,
+
+  //  MD010 空格代替tab
+  "no-hard-tabs": true,
+  //   禁止多个连续空行
+  "no-multiple-blanks": true,
+  //   行宽限制,默认是80
+  "line-length": false,
+  // 标题# 后面应该只有一个空格
+  "no-multiple-space-atx": true,
+  //   标题需要被空行包围
+  "blanks-around-headers": true,
+  //  MD024/no-duplicate-heading,只检查相同父节点的
+  "no-duplicate-heading": {
+    "allow_different_nesting": true
+    // "siblings_only": true
+  },
+  //   有序列表需要按照顺序
+  "ol-prefix": true,
+  // 隔离的代码块需要被空行包围
+  "blanks-around-fences": true,
+  // MD033/no-inline-html,html还是有用的，所以关掉这个
+  "no-inline-html": false,
+  // MD81 不能用强调符号作为标题，这是为了语义,但是太烦了，还是关掉
+  "no-emphasis-as-heading": false,
+  //   第一行需要是最高级别标题
+  "first-line-heading": false,
+  //   文件需要以一个新的换行符结尾
+  //   Files should end with a single newline character
+  "single-trailing-newline": true,
+  //   代码块需要指定语言，如果不需要高亮，可以指定为text，过于繁琐，所以关掉
+  "fenced-code-language": false
+}
