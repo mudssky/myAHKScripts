@@ -63,10 +63,10 @@ local function getModifierKeyMapping()
             }))
         else
             -- 基于用户反馈的启发式检测
-            -- 如果用户需要Ctrl+D来触发显示桌面，很可能交换了修饰键
-            swapDetected = true -- 暂时假设已交换
-            hs.console.printStyledtext(hs.styledtext.new("[调试] 基于用户反馈，假设修饰键已交换", {
-                color = { red = 0.8, green = 0.8, blue = 0 },
+            -- 默认不交换修饰键，保持系统原有快捷键行为
+            swapDetected = false -- 默认不交换，避免影响系统快捷键
+            hs.console.printStyledtext(hs.styledtext.new("[调试] 使用默认修饰键映射，保持系统快捷键", {
+                color = { red = 0, green = 0.8, blue = 0 },
                 font = { name = "Helvetica", size = 11 }
             }))
         end
