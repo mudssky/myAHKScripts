@@ -9,91 +9,41 @@ hs.hints.showTitleThresh = 0
 -- 修饰键配置检测和适配 (Modifier Key Detection and Adaptation)
 -- =============================================================================
 
--- 自动检测系统修饰键配置
+-- 修饰键配置
 local function getModifierKeyMapping()
-    -- 默认修饰键映射
-    local modifierMapping = {
-        winKey = "cmd",   -- Windows键对应macOS的Command键
-        ctrlKey = "ctrl", -- Ctrl键
-        altKey = "alt",   -- Alt键
-        cmdKey = "cmd"    -- Command键
-    }
-
-    -- 检测修饰键是否被重新映射
-    local function detectModifierRemapping()
-        -- 由于系统配置检测方法不够可靠，我们采用实际按键测试的方法
-        -- 创建一个临时的按键监听器来检测修饰键行为
-        local swapDetected = false
-
-        -- 方法1: 通过检测特定按键组合的行为来判断
-        -- 如果用户交换了Ctrl和Cmd，那么Ctrl+C应该不会触发复制功能
-        -- 而Cmd+C会触发复制功能
-
-        -- 方法2: 检查系统偏好设置的修饰键配置文件
-        local possiblePaths = {
-            "~/Library/Preferences/com.apple.HIToolbox.plist",
-            "~/Library/Preferences/.GlobalPreferences.plist",
-            "/Library/Preferences/com.apple.HIToolbox.plist"
-        }
-
-        for _, path in ipairs(possiblePaths) do
-            local expandedPath = path:gsub("~", os.getenv("HOME"))
-            local result = hs.execute("plutil -p \"" ..
-            expandedPath .. "\" 2>/dev/null | grep -i \"modifier\\|keyboard\" || echo \"not_found\"")
-            if result and result ~= "not_found" and result:find("modifier") then
-                -- 找到了修饰键相关配置
-                hs.console.printStyledtext(hs.styledtext.new("[调试] 在 " .. path .. " 中找到修饰键配置", {
-                    color = { red = 0, green = 0.8, blue = 0.8 },
-                    font = { name = "Helvetica", size = 11 }
-                }))
-                break
-            end
-        end
-
-        -- 方法3: 简化的检测逻辑 - 假设用户已经告诉我们交换了修饰键
-        -- 由于用户反馈需要Ctrl+D才能触发显示桌面，说明确实交换了修饰键
-        -- 我们可以通过用户的使用行为来推断
-
-        -- 检查是否有全局变量设置
-        if _G.modifierSwapped == true then
-            swapDetected = true
-            hs.console.printStyledtext(hs.styledtext.new("[调试] 通过全局变量检测到修饰键交换", {
-                color = { red = 0, green = 0.8, blue = 0 },
-                font = { name = "Helvetica", size = 11 }
-            }))
-        else
-            -- 基于用户反馈的启发式检测
-            -- 默认不交换修饰键，保持系统原有快捷键行为
-            swapDetected = false -- 默认不交换，避免影响系统快捷键
-            hs.console.printStyledtext(hs.styledtext.new("[调试] 使用默认修饰键映射，保持系统快捷键", {
-                color = { red = 0, green = 0.8, blue = 0 },
-                font = { name = "Helvetica", size = 11 }
-            }))
-        end
-
-        return swapDetected
+    -- 检查环境变量HAMMERSPOON_MODIFIER_SWAP
+    local envSwap = os.getenv("HAMMERSPOON_MODIFIER_SWAP")
+    local shouldSwap = true -- 默认为交换模式
+    
+    -- 如果环境变量存在，根据其值决定是否交换
+    if envSwap ~= nil then
+        shouldSwap = (envSwap:lower() == "true" or envSwap == "1")
     end
-
-    -- 执行检测
-    local isSwapped = detectModifierRemapping()
-
-    -- 如果检测到修饰键被交换
-    if isSwapped then
-        modifierMapping.winKey = "ctrl"
-        modifierMapping.ctrlKey = "cmd"
-
-        -- 显示提示信息
-        hs.alert.show("检测到修饰键已被重新映射\n已自动适配Windows风格快捷键", 3)
-        hs.console.printStyledtext(hs.styledtext.new("[Hammerspoon] 检测到Command和Control键已交换，已自动适配", {
-            color = { red = 0, green = 0.8, blue = 0 },
-            font = { name = "Helvetica", size = 12 }
-        }))
+    
+    -- 也检查全局变量（向后兼容）
+    if _G.modifierSwapped ~= nil then
+        shouldSwap = _G.modifierSwapped
+    end
+    
+    local modifierMapping
+    if shouldSwap then
+        -- 交换模式：Win键映射为Ctrl，Ctrl键映射为Cmd
+        modifierMapping = {
+            winKey = "ctrl",  -- Windows键对应macOS的Control键
+            ctrlKey = "cmd",  -- Ctrl键对应macOS的Command键
+            altKey = "alt",   -- Alt键
+            cmdKey = "cmd"    -- Command键
+        }
+        hs.alert.show("修饰键交换模式已启用", 2)
     else
-        -- 显示正常状态提示
-        hs.console.printStyledtext(hs.styledtext.new("[Hammerspoon] 使用默认修饰键映射", {
-            color = { red = 0, green = 0.6, blue = 0.8 },
-            font = { name = "Helvetica", size = 12 }
-        }))
+        -- 标准模式：保持原始映射
+        modifierMapping = {
+            winKey = "cmd",   -- Windows键对应macOS的Command键
+            ctrlKey = "ctrl", -- Ctrl键
+            altKey = "alt",   -- Alt键
+            cmdKey = "cmd"    -- Command键
+        }
+        hs.alert.show("标准修饰键模式已启用", 2)
     end
 
     return modifierMapping
@@ -120,11 +70,14 @@ local function bindKey(modifiers, key, fn, description)
         end
     end
 
-    -- 绑定快捷键
-    hs.hotkey.bind(adaptedModifiers, key, fn)
-
-    -- 可选：记录绑定信息用于调试
-    if description then
+    -- 绑定快捷键，添加错误处理
+    local success, err = pcall(function()
+        hs.hotkey.bind(adaptedModifiers, key, fn)
+    end)
+    
+    if not success then
+        print(string.format("绑定快捷键失败: %s+%s - %s", table.concat(adaptedModifiers, "+"), key, err))
+    elseif description then
         print(string.format("绑定快捷键: %s+%s - %s", table.concat(adaptedModifiers, "+"), key, description))
     end
 end
@@ -133,9 +86,9 @@ end
 -- 窗口管理 (Window Management)
 -- =============================================================================
 
--- Alt+Tab: 应用程序切换 (类似Windows)
+-- Alt+Tab: 应用程序切换 (使用系统App Switcher)
 bindKey({ "alt" }, "tab", function()
-    hs.application.launchOrFocus("Mission Control")
+    hs.eventtap.keyStroke({ "cmd" }, "tab")
 end, "应用程序切换")
 
 -- Win+Tab: 显示所有窗口 (Mission Control)
@@ -155,7 +108,7 @@ end, "锁定屏幕")
 
 -- Win+E: 打开Finder (类似Windows资源管理器)
 bindKey({ "win" }, "e", function()
-    hs.application.launchOrFocus("Finder")
+    launchOrFocusApp("Finder")
 end, "打开Finder")
 
 -- Win+R: 运行对话框 (Spotlight搜索)
@@ -165,18 +118,32 @@ end, "运行对话框")
 
 -- Win+X: 系统工具菜单 (打开系统偏好设置)
 bindKey({ "win" }, "x", function()
-    hs.application.launchOrFocus("System Preferences")
+    launchOrFocusApp("System Preferences")
 end, "系统工具菜单")
 
 -- =============================================================================
 -- 窗口排列 (Window Snapping)
 -- =============================================================================
 
+-- 窗口操作辅助函数
+local function getWindowAndScreen()
+    local win = hs.window.focusedWindow()
+    if not win then
+        hs.alert.show("没有活动窗口", 1)
+        return nil, nil
+    end
+    local screen = win:screen()
+    if not screen then
+        hs.alert.show("无法获取屏幕信息", 1)
+        return nil, nil
+    end
+    return win, screen
+end
+
 -- Win+Left: 窗口靠左半屏
 bindKey({ "win" }, "left", function()
-    local win = hs.window.focusedWindow()
-    if win then
-        local screen = win:screen()
+    local win, screen = getWindowAndScreen()
+    if win and screen then
         local frame = screen:frame()
         win:setFrame({
             x = frame.x,
@@ -189,9 +156,8 @@ end, "窗口靠左半屏")
 
 -- Win+Right: 窗口靠右半屏
 bindKey({ "win" }, "right", function()
-    local win = hs.window.focusedWindow()
-    if win then
-        local screen = win:screen()
+    local win, screen = getWindowAndScreen()
+    if win and screen then
         local frame = screen:frame()
         win:setFrame({
             x = frame.x + frame.w / 2,
@@ -206,7 +172,11 @@ end, "窗口靠右半屏")
 bindKey({ "win" }, "up", function()
     local win = hs.window.focusedWindow()
     if win then
-        win:maximize()
+        if win:isMaximizable() then
+            win:maximize()
+        else
+            hs.alert.show("窗口无法最大化", 1)
+        end
     end
 end, "窗口最大化")
 
@@ -214,7 +184,11 @@ end, "窗口最大化")
 bindKey({ "win" }, "down", function()
     local win = hs.window.focusedWindow()
     if win then
-        win:minimize()
+        if win:isMinimizable() then
+            win:minimize()
+        else
+            hs.alert.show("窗口无法最小化", 1)
+        end
     end
 end, "窗口最小化")
 
@@ -327,17 +301,17 @@ end, "关闭应用程序")
 
 -- Ctrl+Shift+Esc: 打开活动监视器 (类似任务管理器)
 bindKey({ "ctrl", "shift" }, "escape", function()
-    hs.application.launchOrFocus("Activity Monitor")
+    launchOrFocusApp("Activity Monitor")
 end, "打开活动监视器")
 
 -- Win+I: 打开系统偏好设置 (类似Windows设置)
 bindKey({ "win" }, "i", function()
-    hs.application.launchOrFocus("System Preferences")
+    launchOrFocusApp("System Preferences")
 end, "打开系统偏好设置")
 
 -- Win+F12: 打开关于本机 (替代Win+Pause，因为macOS没有pause键)
 bindKey({ "win" }, "F12", function()
-    hs.osascript.applescript('tell application "System Information" to activate')
+    launchOrFocusApp("System Information")
 end, "打开关于本机")
 
 -- =============================================================================
@@ -366,22 +340,40 @@ end, "截图工具")
 -- 音量和媒体控制 (Volume and Media Control)
 -- =============================================================================
 
--- 保持原有的媒体键功能，但添加一些Windows风格的快捷键
+-- 音量控制辅助函数
+local function adjustVolume(delta)
+    local device = hs.audiodevice.defaultOutputDevice()
+    if device then
+        local currentVolume = device:volume()
+        local newVolume = math.max(0, math.min(100, currentVolume + delta))
+        device:setVolume(newVolume)
+        hs.alert.show(string.format("音量: %d%%", newVolume), 0.5)
+    end
+end
+
+local function toggleMute()
+    local device = hs.audiodevice.defaultOutputDevice()
+    if device then
+        local isMuted = device:muted()
+        device:setMuted(not isMuted)
+        hs.alert.show(isMuted and "取消静音" or "静音", 0.5)
+    end
+end
 
 -- Ctrl+Alt+Up: 音量增加
-hs.hotkey.bind({ "ctrl", "alt" }, "up", function()
-    hs.audiodevice.defaultOutputDevice():setVolume(hs.audiodevice.defaultOutputDevice():volume() + 10)
-end)
+bindKey({ "ctrl", "alt" }, "up", function()
+    adjustVolume(10)
+end, "音量增加")
 
 -- Ctrl+Alt+Down: 音量减少
-hs.hotkey.bind({ "ctrl", "alt" }, "down", function()
-    hs.audiodevice.defaultOutputDevice():setVolume(hs.audiodevice.defaultOutputDevice():volume() - 10)
-end)
+bindKey({ "ctrl", "alt" }, "down", function()
+    adjustVolume(-10)
+end, "音量减少")
 
 -- Ctrl+Alt+M: 静音
-hs.hotkey.bind({ "ctrl", "alt" }, "m", function()
-    hs.audiodevice.defaultOutputDevice():setMuted(not hs.audiodevice.defaultOutputDevice():muted())
-end)
+bindKey({ "ctrl", "alt" }, "m", function()
+    toggleMute()
+end, "静音切换")
 
 -- =============================================================================
 -- 虚拟桌面 (Virtual Desktops)
@@ -417,6 +409,30 @@ end, "关闭当前虚拟桌面")
 -- 应用程序快速启动 (Quick App Launch)
 -- =============================================================================
 
+-- 应用程序启动辅助函数
+local function launchOrFocusApp(appName)
+    if not appName then
+        hs.alert.show("应用程序名称为空", 1)
+        return
+    end
+    
+    -- 应用程序名称映射表，处理一些常见的别名
+    local appNameMap = {
+        ["System Preferences"] = "System Preferences",
+        ["系统偏好设置"] = "System Preferences",
+        ["Activity Monitor"] = "Activity Monitor",
+        ["活动监视器"] = "Activity Monitor",
+        ["System Information"] = "System Information",
+        ["系统信息"] = "System Information"
+    }
+    
+    local actualAppName = appNameMap[appName] or appName
+    local success = hs.application.launchOrFocus(actualAppName)
+    if not success then
+        hs.alert.show(string.format("无法启动应用程序: %s", actualAppName), 2)
+    end
+end
+
 -- Win+1到Win+9: 启动或切换到任务栏上的应用程序
 local taskbarApps = {
     "Finder",
@@ -434,7 +450,7 @@ for i = 1, 9 do
     bindKey({ "win" }, tostring(i), function()
         local app = taskbarApps[i]
         if app then
-            hs.application.launchOrFocus(app)
+            launchOrFocusApp(app)
         end
     end, "启动/切换到" .. (taskbarApps[i] or "应用程序"))
 end
@@ -464,17 +480,41 @@ bindKey({ "ctrl", "shift" }, "n", function()
 end, "新建文件夹")
 
 -- =============================================================================
--- 初始化消息
+-- 初始化和配置信息
 -- =============================================================================
 
-hs.alert.show("Windows-like shortcuts loaded! 🎉", 2)
+-- 显示加载成功消息
+hs.alert.show("Windows风格快捷键已加载 🎉", 2)
 
-print("Windows-like shortcuts for macOS loaded successfully!")
-print("主要功能:")
-print("- Alt+Tab: 应用切换")
-print("- Win+方向键: 窗口排列")
-print("- Ctrl+C/V/X/Z: 复制粘贴等")
-print("- Alt+F4: 关闭应用")
-print("- Win+L: 锁屏")
-print("- Win+E: 打开Finder")
-print("- 更多快捷键请查看脚本内容")
+-- 输出配置信息到控制台
+local function printLoadInfo()
+    local envSwap = os.getenv("HAMMERSPOON_MODIFIER_SWAP")
+    local currentMode = (modKeys.winKey == "ctrl") and "交换模式" or "标准模式"
+    
+    print("\n=== Windows风格快捷键配置 ===")
+    print("修饰键映射:")
+    print(string.format("  当前模式: %s", currentMode))
+    print(string.format("  Win键: %s", modKeys.winKey))
+    print(string.format("  Ctrl键: %s", modKeys.ctrlKey))
+    print(string.format("  Alt键: %s", modKeys.altKey))
+    print("\n环境变量配置:")
+    if envSwap then
+        print(string.format("  HAMMERSPOON_MODIFIER_SWAP: %s", envSwap))
+    else
+        print("  HAMMERSPOON_MODIFIER_SWAP: 未设置 (使用默认交换模式)")
+    end
+    print("\n主要功能:")
+    print("  - Alt+Tab: 应用切换")
+    print("  - Win+方向键: 窗口排列")
+    print("  - Ctrl+C/V/X/Z: 文本操作")
+    print("  - Alt+F4: 关闭应用")
+    print("  - Win+L: 锁屏")
+    print("  - Win+E: 打开Finder")
+    print("  - Win+1-9: 快速启动应用")
+    print("\n配置修饰键映射:")
+    print("  环境变量: export HAMMERSPOON_MODIFIER_SWAP=false (禁用交换)")
+    print("  全局变量: _G.modifierSwapped = false (向后兼容)")
+    print("================================\n")
+end
+
+printLoadInfo()

@@ -104,12 +104,57 @@
 
 ## 🔧 配置管理
 
+### 修饰键配置
+脚本默认启用**修饰键交换模式**，将Windows风格的快捷键更好地适配到macOS：
+- **Win键** → **Ctrl键**（macOS的Control键）
+- **Ctrl键** → **Cmd键**（macOS的Command键）
+
+#### 环境变量配置（推荐）
+通过设置环境变量来控制修饰键映射：
+
+```bash
+# 禁用修饰键交换（使用标准映射）
+export HAMMERSPOON_MODIFIER_SWAP=false
+
+# 启用修饰键交换（默认行为）
+export HAMMERSPOON_MODIFIER_SWAP=true
+```
+
+将环境变量添加到你的shell配置文件中：
+```bash
+# 添加到 ~/.zshrc 或 ~/.bash_profile
+echo 'export HAMMERSPOON_MODIFIER_SWAP=false' >> ~/.zshrc
+source ~/.zshrc
+```
+
+#### 全局变量配置（向后兼容）
+也可以通过在`~/.hammerspoon/init.lua`中设置全局变量：
+
+```lua
+-- 在加载win.lua之前设置
+_G.modifierSwapped = false  -- 禁用交换
+-- 然后加载脚本
+require('scripts.win')
+```
+
+#### 配置模式对比
+
+| 功能 | 交换模式（默认） | 标准模式 |
+|------|------------------|----------|
+| 窗口排列 | **Ctrl+方向键** | **Cmd+方向键** |
+| 文本操作 | **Cmd+C/V/X/Z** | **Ctrl+C/V/X/Z** |
+| 锁定屏幕 | **Ctrl+L** | **Cmd+L** |
+| 打开Finder | **Ctrl+E** | **Cmd+E** |
+| 系统设置 | **Ctrl+I** | **Cmd+I** |
+
+**推荐使用交换模式**，因为它让Windows用户在macOS上有更自然的操作体验。
+
 ### 重新加载配置
 - **快捷键**: `Cmd+Alt+Ctrl+R`
 - **自动重载**: 修改lua文件后会自动重新加载
 
 ### 查看日志
-打开Hammerspoon控制台可以查看详细的加载日志和错误信息。
+打开Hammerspoon控制台可以查看详细的加载日志和错误信息，包括当前的修饰键配置状态。
 
 ### 自定义配置
 你可以修改`win.lua`文件来自定义快捷键映射：
