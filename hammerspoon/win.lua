@@ -54,16 +54,6 @@ local function getModifierKeyMapping()
         -- 由于用户反馈需要Ctrl+D才能触发显示桌面，说明确实交换了修饰键
         -- 我们可以通过用户的使用行为来推断
 
-        -- 临时解决方案：让用户手动确认
-        hs.console.printStyledtext(hs.styledtext.new("[提示] 如果您已经在系统偏好设置中交换了Ctrl和Command键，", {
-            color = { red = 0.8, green = 0.6, blue = 0 },
-            font = { name = "Helvetica", size = 11 }
-        }))
-        hs.console.printStyledtext(hs.styledtext.new("[提示] 请在Hammerspoon控制台中输入: modifierSwapped = true", {
-            color = { red = 0.8, green = 0.6, blue = 0 },
-            font = { name = "Helvetica", size = 11 }
-        }))
-
         -- 检查是否有全局变量设置
         if _G.modifierSwapped == true then
             swapDetected = true
