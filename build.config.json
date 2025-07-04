@@ -1,0 +1,24 @@
+{
+  "build": {
+    "scriptsPath": "./Scripts",
+    "basePath": "./base.ahk",
+    "outputPath": "./myAllScripts.ahk",
+    "encoding": "UTF8",
+    "useInclude": true
+  },
+  "shortcuts": {
+    "createShortcut": true,
+    "useUserStartup": false,
+    "linkName": ""
+  },
+  "execution": {
+    "autoStart": true,
+    "force": false,
+    "verbose": false
+  },
+  "logging": {
+    "enableLogging": true,
+    "logLevel": "Info",
+    "logPath": "./build.log"
+  }
+}
