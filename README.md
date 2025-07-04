@@ -13,6 +13,29 @@
 
 ## 安装
 
+### 1. 安装 AutoHotkey 2.0
+
+项目提供了自动安装脚本 `install-autohotkey.ps1`，可以自动下载并安装最新版本的 AutoHotkey 2.0：
+
+```powershell
+# 以管理员身份运行 PowerShell，然后执行：
+.\install-autohotkey.ps1
+
+# 静默安装（无用户交互）
+.\install-autohotkey.ps1 -Silent
+
+# 强制重新安装（即使已安装）
+.\install-autohotkey.ps1 -Force
+```
+
+**注意事项：**
+- 建议以管理员身份运行 PowerShell
+- 确保 PowerShell 执行策略允许运行脚本
+- 脚本会自动从 GitHub 下载最新版本
+- 安装完成后需要重启终端以使用 AutoHotkey 命令
+
+### 2. 部署脚本
+
 makeScripts是powershell脚本，用于把scripts目录里面的所有脚本和base.ahk拼接成一个并且在startup目录创建快捷方式，然后再执行一遍最终生成的ahk脚本。
 
 注意先确认powershell的执行权限，还有autohotkey v2是否正确安装再执行。
