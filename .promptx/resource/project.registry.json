@@ -1,0 +1,63 @@
+{
+  "version": "2.0.0",
+  "source": "project",
+  "metadata": {
+    "version": "2.0.0",
+    "description": "project 级资源注册表",
+    "createdAt": "2025-07-04T16:55:44.268Z",
+    "updatedAt": "2025-07-04T16:55:44.269Z",
+    "resourceCount": 3
+  },
+  "resources": [
+    {
+      "id": "autohotkey-expert",
+      "source": "project",
+      "protocol": "role",
+      "name": "Autohotkey Expert 角色",
+      "description": "专业角色，提供特定领域的专业能力",
+      "reference": "@project://.promptx/resource/domain/autohotkey-expert/autohotkey-expert.role.md",
+      "metadata": {
+        "createdAt": "2025-07-04T16:55:44.269Z",
+        "updatedAt": "2025-07-04T16:55:44.269Z",
+        "scannedAt": "2025-07-04T16:55:44.269Z"
+      }
+    },
+    {
+      "id": "autohotkey-mindset",
+      "source": "project",
+      "protocol": "thought",
+      "name": "Autohotkey Mindset 思维模式",
+      "description": "思维模式，指导AI的思考方式",
+      "reference": "@project://.promptx/resource/domain/autohotkey-expert/thought/autohotkey-mindset.thought.md",
+      "metadata": {
+        "createdAt": "2025-07-04T16:55:44.269Z",
+        "updatedAt": "2025-07-04T16:55:44.269Z",
+        "scannedAt": "2025-07-04T16:55:44.269Z"
+      }
+    },
+    {
+      "id": "autohotkey-workflow",
+      "source": "project",
+      "protocol": "execution",
+      "name": "Autohotkey Workflow 执行模式",
+      "description": "执行模式，定义具体的行为模式",
+      "reference": "@project://.promptx/resource/domain/autohotkey-expert/execution/autohotkey-workflow.execution.md",
+      "metadata": {
+        "createdAt": "2025-07-04T16:55:44.269Z",
+        "updatedAt": "2025-07-04T16:55:44.269Z",
+        "scannedAt": "2025-07-04T16:55:44.269Z"
+      }
+    }
+  ],
+  "stats": {
+    "totalResources": 3,
+    "byProtocol": {
+      "role": 1,
+      "thought": 1,
+      "execution": 1
+    },
+    "bySource": {
+      "project": 3
+    }
+  }
+}
