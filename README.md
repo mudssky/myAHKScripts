@@ -7,6 +7,7 @@
 >
 > 🚀 **新仓库地址 / New Repository:**
 > **[https://github.com/mudssky/powershellScripts](https://github.com/mudssky/powershellScripts)**
+> scripts/ahk/
 >
 > 请前往新仓库获取最新的更新和支持。
 > Please visit the new repository for the latest updates.
