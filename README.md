@@ -1,12 +1,29 @@
+# [已归档 / Archived] myAHKScripts
 
-- [myAHKScripts](#myahkscripts)
+> **⚠️ 归档说明 / Archive Notice**
+>
+> 本项目已停止单独维护，所有代码和历史记录已迁移至新的 Monorepo 仓库。
+> This project has been archived and merged into a new Monorepo.
+>
+> 🚀 **新仓库地址 / New Repository:**
+> **[https://github.com/mudssky/powershellScripts](https://github.com/mudssky/powershellScripts)**
+>
+> 请前往新仓库获取最新的更新和支持。
+> Please visit the new repository for the latest updates.
+
+---
+
+# (旧版文档 / Legacy Documentation) myAHKScripts
+
+- [\[已归档 / Archived\] myAHKScripts](#已归档--archived-myahkscripts)
+- [(旧版文档 / Legacy Documentation) myAHKScripts](#旧版文档--legacy-documentation-myahkscripts)
   - [安装](#安装)
+    - [1. 安装 AutoHotkey 2.0](#1-安装-autohotkey-20)
+    - [2. 部署脚本](#2-部署脚本)
   - [01. capslock.ahk](#01-capslockahk)
   - [02.switchIME.ahk](#02switchimeahk)
   - [03.win.ahk](#03winahk)
   - [04.鼠标连点器](#04鼠标连点器)
-
-# myAHKScripts
 
 存放自己编写的autohotkey脚本，全部基于v2版本的语法。
 脚本统一存放在scripts目录
@@ -29,6 +46,7 @@
 ```
 
 **注意事项：**
+
 - 建议以管理员身份运行 PowerShell
 - 确保 PowerShell 执行策略允许运行脚本
 - 脚本会自动从 GitHub 下载最新版本
